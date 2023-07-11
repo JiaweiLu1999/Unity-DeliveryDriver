@@ -4,19 +4,33 @@ using UnityEngine;
 
 public class Driver : MonoBehaviour
 {
-    float w = 180f / (80 * Mathf.PI);
+    [SerializeField] float steerSpeed = 300f;
+    [SerializeField] float moveSpeed = 20f;
+    [SerializeField] float slowMoveSpeed = 10f;
+    [SerializeField] float fastMoveSpeed = 30f;
+    
     // Start is called before the first frame update
     void Start()
     {
         
-        Debug.Log(w);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
-        transform.Rotate(0, 0, w);
-        transform.Translate(0, 0.1f, 0);
+        float steerAmount = Input.GetAxis("Horizontal") * steerSpeed * Time.deltaTime;
+        float moveAmount = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
+        transform.Rotate(0, 0, -steerAmount);
+        transform.Translate(0, moveAmount, 0);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other) {
+        if (other.gameObject.tag.Equals("SpeedUp")) {
+            this.moveSpeed = fastMoveSpeed;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D other) {
+        this.moveSpeed = slowMoveSpeed;
     }
 }
